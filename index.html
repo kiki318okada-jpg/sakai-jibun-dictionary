@@ -1,29 +1,18 @@
-<!doctype html>
-<html lang="ja">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ジブン辞典</title>
-<link rel="stylesheet" href="style.css?v=20260928-3">
-</head>
-<body>
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ジブン辞典</title><link rel="stylesheet" href="./style.css?build=12"></head><body>
 <header><b>SAKAI ENTREPRENEURSHIP PROGRAM</b><div class="bar"><i id="bar"></i></div></header>
 <main id="app">
-  <div class="k">WELCOME</div>
-  <h1>自分の知らなかった<br>「自分」を集めよう。</h1>
-  <p class="lead">今日は、将来の夢や進路を決める日ではありません。いろんな人の生き方をヒントに、自分の中にある材料を集めて「ジブン辞典」の最初の1ページをつくります。</p>
-  <div class="card"><b>このページについて</b><p>回答はこの端末の同じブラウザから、いつでも見直し・修正できます。名前やメールアドレスの入力はありません。</p></div>
-  <button class="primary" id="fallbackStart">ジブン辞典をはじめる →</button>
+<div class="k">WELCOME</div>
+<h1>自分の知らなかった<br>「自分」を集めよう。</h1>
+<p class="lead">今日は、将来の夢や進路を決める日ではありません。いろんな人の生き方をヒントに、自分の中にある材料を集めて「ジブン辞典」の最初の1ページをつくります。</p>
+<div class="card"><b>このページについて</b><p>回答はこの端末の同じブラウザから、いつでも見直し・修正できます。名前やメールアドレスの入力はありません。</p></div>
+<button class="primary" onclick="window.JIBUN_START&&window.JIBUN_START()">ジブン辞典をはじめる →</button>
 </main>
-<footer><button onclick="back()">← もどる</button><small id="status">この端末に自動保存されます</small></footer>
+<footer><button id="backButton">← もどる</button><small id="status">この端末に自動保存されます</small></footer>
+<script src="./config.js?build=12"></script>
+<script src="./app.js?build=12"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js?v=20260928-3"></script>
-<script src="supabase-client.js?v=20260928-3"></script>
-<script src="app.js?v=20260928-3"></script>
+<script src="./supabase-client.js?build=12"></script>
 <script>
-document.getElementById('fallbackStart')?.addEventListener('click',function(){
-  if(typeof step==='function') step(1);
-});
-try{ if(typeof initSupabase==='function') initSupabase(); }catch(e){ console.warn(e); }
+try{if(typeof initSupabase==="function")initSupabase()}catch(e){console.warn("backend init",e)}
 </script>
 </body></html>
