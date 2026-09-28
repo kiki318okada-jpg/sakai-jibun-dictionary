@@ -8,4 +8,13 @@ function w3(){let o=Object.keys(L).filter(k=>s.w2[k]),k=s.w3.key,ch=k?s.w2[k]:""
 function w4(){let chosen=s.w3.key?s.w2[s.w3.key]:"";return '<div class=k>WORK 04</div><h1>隣の人に、<br>もう一回聞いてもらう。</h1><div class=card><p><b>①</b> 自分が選んだものと、「なんで？」の答えを伝える<br><b>②</b> 相手はもう一度だけ「それって、なんで？」と聞く<br><b>③</b> 思ったことを、そのまま答える</p><p class=hint>1人2分 → 交代</p></div><div class=answer><small>選んだもの</small>'+e(chosen)+'</div><div class=answer><small>自分で考えた「なんで？」</small>'+e(s.w3.why1)+'</div><label>相手にもう一度「なんで？」と聞かれて、何と答えた？</label><p class=hint>例：「できなかったことが、できるようになるのが嬉しいからかも」</p><textarea oninput="field(\'w4\',\'why2\',this.value)">'+e(s.w4.why2)+'</textarea>'+btn()}
 function finalp(){let chosen=s.w3.key?s.w2[s.w3.key]:"";return '<div class=k>MY ジブン辞典</div><h1>今日見つけた、<br>自分の材料。</h1><div class=card><h2>なぜか気になった人</h2><b>'+e(s.w1.person)+'</b><div class=answer><small>気になった理由</small>'+e(s.w1.reasonType)+'</div><p>'+e(s.w1.reason)+'</p></div><div class=card><h2>自分の中にあった4つ</h2>'+Object.keys(L).map(k=>'<div class=answer><small>'+L[k]+'</small>'+e(s.w2[k])+'</div>').join("")+'</div><div class=card><h2>深ぼって見つけたこと</h2><div class=answer><small>選んだもの</small>'+e(chosen)+'</div><div class=answer><small>なんで？</small>'+e(s.w3.why1)+'</div><div class=answer><small>もう一度「なんで？」</small>'+e(s.w4.why2)+'</div></div><div class=card><h2>ジブン辞典</h2><p class=hint>最初に書いたものと、「なんで？」を重ねた答えを見てみよう。</p><label>私って、もしかすると……</label><input value="'+e(s.final.statement)+'" oninput="field(\'final\',\'statement\',this.value)" placeholder="＿＿＿＿＿＿が好き／気になる人かも"></div>'+btn()}
 function nextp(){return '<div class=k>NEXT</div><h1>「自分を知る」から、<br>「自分を使ってみる」へ。</h1><div class=card><a class=primary target="_blank" href="'+(CFG.links.twoDayFlyer||'#')+'">2DAY PROGRAMを見る ↗</a></div><div class=card><a class=secondary target="_blank" href="'+(CFG.links.survey||'#')+'">アンケートに回答する ↗</a></div>'}
-function render(){document.querySelector("#bar").style.width=(s.step/6*100)+"%";document.querySelector("footer button").style.visibility=s.step?"visible":"hidden";document.querySelector("#app").innerHTML=[home,w1,w2,w3,w4,finalp,nextp][s.step]()}ensureAnonymousSession().then(()=>render()).catch(err=>{document.querySelector("#app").innerHTML='<div class=card><h2>接続エラー</h2><p>'+e(err.message)+'</p></div>'});
+function render(){
+  const view=[home,w1,w2,w3,w4,finalp,nextp][s.step]||home;
+  const bar=document.querySelector("#bar");
+  const backBtn=document.querySelector("footer button");
+  const app=document.querySelector("#app");
+  if(bar)bar.style.width=(s.step/6*100)+"%";
+  if(backBtn)backBtn.style.visibility=s.step?"visible":"hidden";
+  if(app)app.innerHTML=view();
+}
+render();
