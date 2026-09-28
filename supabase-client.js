@@ -1,5 +1,5 @@
 let sb=null;
-const CID_KEY="sakai_jibun_client_id_v2";
+const CID_KEY="sakai_jibun_client_id_v2";\nconst SCHOOLS={sakai:"堺高校",risho:"利晶学園中学校",akasakadai:"赤坂台中学校"};\nfunction getSchoolId(){const x=new URLSearchParams(location.search).get("school");return SCHOOLS[x]?x:""}\nfunction getSchoolName(){return SCHOOLS[getSchoolId()]||""}
 function initSupabase(){
   const c=window.JIBUN_CONFIG?.supabase;
   if(!c?.url||!c?.publishableKey)return null;
@@ -30,7 +30,7 @@ async function saveRemote(state){
 }
 async function getSummary(){
   if(!sb)throw new Error("Supabase is not configured");
-  const {data,error}=await sb.rpc("get_jibun_work1_summary",{p_session_id:JIBUN_CONFIG.sessionId});
+  const {data,error}=await sb.rpc("get_jibun_work1_summary",{p_session_id:JIBUN_CONFIG.sessionId,p_school_id:getSchoolId()});
   if(error)throw error;
   const choices=(data||[]).map(x=>({person:x.person,count:Number(x.response_count)}));
   return {total:choices.reduce((a,b)=>a+b.count,0),choices}
