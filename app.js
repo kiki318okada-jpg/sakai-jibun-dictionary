@@ -11,10 +11,12 @@ function nextp(){return '<div class=k>NEXT</div><h1>「自分を知る」から�
 function render(){
   const view=[home,w1,w2,w3,w4,finalp,nextp][s.step]||home;
   const bar=document.querySelector("#bar");
-  const backBtn=document.querySelector("footer button");
+  const backBtn=document.querySelector("#backButton");
   const app=document.querySelector("#app");
   if(bar)bar.style.width=(s.step/6*100)+"%";
   if(backBtn)backBtn.style.visibility=s.step?"visible":"hidden";
   if(app)app.innerHTML=view();
 }
-render();
+window.JIBUN_START=function(){step(1)};
+document.querySelector("#backButton")?.addEventListener("click",back);
+if(s.step>0)render();
