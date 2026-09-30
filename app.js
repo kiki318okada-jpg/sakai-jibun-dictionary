@@ -1,6 +1,27 @@
 const CFG=window.JIBUN_CONFIG,PARAMS=new URLSearchParams(location.search),SCHOOL=(PARAMS.get("school")||"unknown"),K="sakai_jibun_v2_"+SCHOOL;if(PARAMS.get("reset")==="1"){localStorage.removeItem(K);history.replaceState(null,"",location.pathname+"?school="+encodeURIComponent(SCHOOL))}const blank={step:0,w1:{person:"",reasonType:"",reason:""},w2:{interest:"",like:"",experience:"",moyamoya:""},w3:{key:"",why1:""},w4:{why2:""},final:{statement:""}};let s;try{s=JSON.parse(localStorage.getItem(K)||"{}")}catch(e){s={}};s={...blank,...s,w1:{...blank.w1,...(s.w1||{})},w2:{...blank.w2,...(s.w2||{})},w3:{...blank.w3,...(s.w3||{})},w4:{...blank.w4,...(s.w4||{})},final:{...blank.final,...(s.final||{})}};if(!s.w4.why2&&s.w3.why2)s.w4.why2=s.w3.why2;if(!s.w4.why2&&s.w4.discovery)s.w4.why2=s.w4.discovery;
 const L={interest:"気になる",like:"好き・詳しい",experience:"経験",moyamoya:"モヤモヤ"},P=["レンタルなんもしない人","香り演出家｜郡 香苗さん","腸内細菌研究者｜菅沼 名津季さん","共有するセルフケアアプリ運営者｜森本 陽加里さん","寿司リーマン｜瀧本 伸哉さん","アートとまちの仕掛け人 × 一級建築士｜田村 晟一朗さん","映像クリエイター｜立花 駿さん","浅煎りコーヒー×教育の社会起業家｜中村 千尋さん","吹奏楽の未来をつくるプロデューサー｜伊東 結菜さん","水辺のいのちを守る活動家｜すがわらえみさん"],R=["やっていること","考え方","生き方・働き方","自分と似ているところ","自分にはないところ","なんとなく"],e=x=>(x||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
-async function sync(){try{await saveRemote(s)}catch(err){console.warn(err)}}function save(){localStorage.setItem(K,JSON.stringify(s));sync();let x=document.querySelector("#status");if(x){x.textContent="保存しました ✓";setTimeout(()=>x.textContent="この端末に自動保存されます",900)}}function field(a,b,v){s[a][b]=v;save()}
+let syncTimer=null,syncInFlight=false,syncQueued=false;
+async function syncNow(){
+  if(syncTimer){clearTimeout(syncTimer);syncTimer=null}
+  if(syncInFlight){syncQueued=true;return}
+  syncInFlight=true;
+  try{await saveRemote(s)}
+  catch(err){console.warn(err)}
+  finally{
+    syncInFlight=false;
+    if(syncQueued){syncQueued=false;syncSoon()}
+  }
+}
+function syncSoon(){
+  if(syncTimer)clearTimeout(syncTimer);
+  syncTimer=setTimeout(()=>{syncTimer=null;syncNow()},1500)
+}
+function save(){
+  localStorage.setItem(K,JSON.stringify(s));
+  syncSoon();
+  let x=document.querySelector("#status");
+  if(x){x.textContent="この端末に保存しました ✓";setTimeout(()=>x.textContent="この端末に自動保存されます",900)}
+}function field(a,b,v){s[a][b]=v;save()}
 function validationMessage(){let m="";
  if(s.step===1&&!s.w1.person)m="「なぜか気になる人」を1人選んでください。";
  else if(s.step===1&&!s.w1.reasonType)m="気になった理由に近いものを1つ選んでください。";
@@ -10,7 +31,7 @@ function validationMessage(){let m="";
  else if(s.step===4&&!String(s.w4.why2||"").trim())m="相手にもう一度「なんで？」と聞かれて答えたことを書いてください。";
  else if(s.step===5&&!String(s.final.statement||"").trim())m="最後に「私って、もしかすると…」を自分の言葉で書いてみてください。";
  return m}
-function next(){const m=validationMessage();if(m){const x=document.querySelector("#validation");if(x){x.textContent=m;x.scrollIntoView({behavior:"smooth",block:"center"})}return}step(s.step+1)}
+async function next(){const m=validationMessage();if(m){const x=document.querySelector("#validation");if(x){x.textContent=m;x.scrollIntoView({behavior:"smooth",block:"center"})}return}await syncNow();step(s.step+1)}
 function step(n){s.step=n;save();render();scrollTo(0,0)}
 function back(){if(s.step>0)step(s.step-1)}
 function person(x){s.w1.person=x;save();render()}
