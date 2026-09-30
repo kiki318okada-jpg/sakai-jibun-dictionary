@@ -57,3 +57,21 @@ function render(){
 window.JIBUN_START=function(){step(1)};
 document.querySelector("#backButton")?.addEventListener("click",back);
 if(s.step>0)render();
+function keepInputVisible(el){
+  if(!el||!el.matches("textarea,input"))return;
+  setTimeout(()=>{try{el.scrollIntoView({behavior:"smooth",block:"center"})}catch(e){}},250);
+  setTimeout(()=>{try{el.scrollIntoView({behavior:"smooth",block:"center"})}catch(e){}},650);
+}
+document.addEventListener("focusin",e=>keepInputVisible(e.target));
+if(window.visualViewport){
+  let lastH=window.visualViewport.height;
+  window.visualViewport.addEventListener("resize",()=>{
+    const h=window.visualViewport.height;
+    document.documentElement.style.setProperty("--vvh",h+"px");
+    if(h<lastH-80){
+      const el=document.activeElement;
+      if(el&&el.matches("textarea,input"))keepInputVisible(el);
+    }
+    lastH=h;
+  });
+}
